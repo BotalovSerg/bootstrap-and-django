@@ -5,10 +5,37 @@
 {% endblock %}
 {% block content %}
 <div class="container-fluid my-2">
-  <div class="row">
+  <div class="row bg-success text-white mx-2">
     <div class="col text-center">
-      <div>{{text_body}}</div>
+      <p>Добро пожаловать на сайе <em>World books</em>. Это простой
+        веб-сайт, написанный на Django и Bootstrap.</p>
     </div>
   </div>
+  <div class="row text-center text-dark lh-2">
+    <h4>Сведения из базы данных</h4>
+  </div>
+  <div class="row my-2 text-white">
+    <div class="col mx-2 bg-primary">Количество книг - {{num_books}}</div>
+    <div class="col mx-2 bg-primary">На складе в наличии - {{num_instances_available}}</div>
+    <div class="col mx-2 bg-primary">Количество авторов - {{num_authors}}</div>
+  </div>
+  <div class="row text-center text-dark lh-2">
+    <h3>Книги</h3>
+  </div>
+  {% if num_books > 0 %}
+  <div class="row my-2">
+    {% for obj in books %}
+    <div class="card" style="width: 9rem;">
+      <img src="{{obj.photo.url}}" class="card-img-top">
+      <div class="card-body">
+        <p class="card-text small">
+          {{obj.title}}, Price:{{obj.price}} rub.
+        </p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
 </div>
 {% endblock %}

@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
   <script defer src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <title>{% block title %}{% endblock %}</title>
 </head>
 
 <body>
@@ -16,7 +17,7 @@
         <img src="{% static 'images/pp100.jpg' %}" width="70" height="70">
       </div>
       <div class="col-10">
-        <h1>Это шапка сайта с логотипом</h1>
+        <h3>Мир книг - печатный и электронный книги</h3>
       </div>
     </div>
   </div>
@@ -40,8 +41,8 @@
       <div class="col-2">
         {% block sidebar %}
         <nav class="nav flex-column">
-          <a class="nav-link" href="{% url 'index' %}">Link 1</a>
-          <a class="nav-link" href="{% url 'index' %}">Link 2</a>
+          <a class="nav-link" href="{% url 'index' %}">Все книги</a>
+          <a class="nav-link" href="{% url 'index' %}">Все авторы</a>
           <a class="nav-link" href="{% url 'index' %}">Link 3</a>
         </nav>
         {% endblock %}
@@ -55,9 +56,9 @@
     </div>
   </div>
   <div class="container-fluid">
-    <div class="row bg-primary text-center text-white lh-1">
+    <div class="row bg-primary text-center text-white">
       {% block footer %}
-      <p>Это подвал (footer) всех страниц сайта</p>
+      <p>&copy; Это подвал (footer) всех страниц сайта</p>
       {% endblock %}
     </div>
   </div>
