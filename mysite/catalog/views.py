@@ -35,3 +35,12 @@ class BookListView(ListView):
 class BookDetailView(DetailView):
     model = Book
     context_object_name = "book"
+
+
+class AuthorListView(ListView):
+    model = Author
+    paginate_by = 4
+
+
+class AuthorDetailView(DetailView):
+    model = Author

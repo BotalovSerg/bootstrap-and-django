@@ -16,7 +16,7 @@ from .models import (
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
     list_display = ["last_name", "first_name", "photo", "show_photo"]
-    fields = ["last_name", "first_name", ("date_of_birth", "photo")]
+    fields = ["last_name", "first_name", "about", ("date_of_birth", "photo")]
 
     @admin.display(description="Фото")
     def show_photo(self, obj: Author):

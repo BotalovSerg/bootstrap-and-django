@@ -42,7 +42,7 @@
         {% block sidebar %}
         <nav class="nav flex-column">
           <a class="nav-link" href="{% url 'books' %}">Все книги</a>
-          <a class="nav-link" href="{% url 'index' %}">Все авторы</a>
+          <a class="nav-link" href="{% url 'authors-list' %}">Все авторы</a>
           <a class="nav-link" href="{% url 'index' %}">Link 3</a>
         </nav>
         {% endblock %}
@@ -56,7 +56,7 @@
           <div class="pagination">
             <span class="step-links">
               {% if page_obj.paginator.num_pages > 1 %}
-                {% if page_obj.has_previos %}
+                {% if page_obj.has_previous %}
                   <a href="?page=1">&laquo; Первая</a>
                   <a href="?page={{page_obj.previous_page_number}}">Предыдушая</a>
                 {% endif %}

@@ -10,7 +10,7 @@
   <div class="row my-2">
     <p><strong>Автор:</strong>
       {% for author in book.author.all %}
-      <a href="">{{author.first_name}} {{author.last_name}}</a>
+      <a href="{% url 'authors-detail' author.pk %}">{{author.first_name}} {{author.last_name}}</a>
       {% endfor %}
     </p>
   </div>
