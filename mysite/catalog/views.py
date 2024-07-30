@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import ListView, DetailView
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 
 from .models import Book, Author, BookInstance
 
@@ -63,6 +65,12 @@ def contact(request: HttpRequest) -> HttpResponse:
         "email": email,
     }
     return render(request, "catalog/contact.html", context=context)
+
+
+def logout_view(request):
+    logout(request)
+
+    return redirect("login")
 
 
 class BookListView(ListView):
