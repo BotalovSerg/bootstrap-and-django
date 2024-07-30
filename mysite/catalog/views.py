@@ -1,10 +1,15 @@
+from typing import Any
+from django.db.models.query import QuerySet
 from django.shortcuts import render
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.views.generic import ListView, DetailView
 from django.contrib.auth import logout
 from django.shortcuts import redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
 
 from .models import Book, Author, BookInstance
+from .forms import AddAuthorForm
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -67,6 +72,36 @@ def contact(request: HttpRequest) -> HttpResponse:
     return render(request, "catalog/contact.html", context=context)
 
 
+def edit_authors(request: HttpRequest) -> HttpResponse:
+    authors = Author.objects.all()
+    context = {"authors": authors}
+    return render(request, "catalog/edit_authors.html", context)
+
+
+def add_author(request: HttpRequest) -> HttpResponse:
+    if request.method == "POST":
+        form = AddAuthorForm(request.POST, request.FILES)
+        if form.is_valid():
+            first_name = form.cleaned_data.get("first_name")
+            last_name = form.cleaned_data.get("last_name")
+            date_of_birth = form.cleaned_data.get("date_of_birth")
+            about = form.cleaned_data.get("about")
+            photo = form.cleaned_data.get("photo")
+            obj = Author.objects.create(
+                first_name=first_name,
+                last_name=last_name,
+                date_of_birth=date_of_birth,
+                about=about,
+                photo=photo,
+            )
+            obj.save()
+            return HttpResponseRedirect(reverse("authors-list"))
+    else:
+        form = AddAuthorForm()
+        context = {"form": form}
+        return render(request, "catalog/authors_add.html", context=context)
+
+
 def logout_view(request):
     logout(request)
 
@@ -91,3 +126,16 @@ class AuthorListView(ListView):
 
 class AuthorDetailView(DetailView):
     model = Author
+
+
+class LoanedBooksByUserListView(LoginRequiredMixin, ListView):
+    model = BookInstance
+    template_name = "catalog/bookinstance_list_borrowed_user.html"
+    paginate_by = 10
+
+    def get_queryset(self) -> QuerySet[Any]:
+        return (
+            BookInstance.objects.filter(borrower=self.request.user)
+            .filter(status__exact="2")
+            .order_by("due_back")
+        )
