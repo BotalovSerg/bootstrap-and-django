@@ -1,15 +1,20 @@
 from typing import Any
 from django.db.models.query import QuerySet
 from django.shortcuts import render
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseRedirect,
+    HttpResponseNotFound,
+)
 from django.views.generic import ListView, DetailView
 from django.contrib.auth import logout
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 
 from .models import Book, Author, BookInstance
-from .forms import AddAuthorForm
+from .forms import AddAuthorForm, EditAuthorForm
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -72,10 +77,25 @@ def contact(request: HttpRequest) -> HttpResponse:
     return render(request, "catalog/contact.html", context=context)
 
 
-def edit_authors(request: HttpRequest) -> HttpResponse:
+def list_edit_authors(request: HttpRequest) -> HttpResponse:
     authors = Author.objects.all()
     context = {"authors": authors}
     return render(request, "catalog/edit_authors.html", context)
+
+
+def edit_author(request: HttpRequest, pk: int) -> HttpResponse:
+
+    if request.method == "POST":
+        instance = Author.objects.get(pk=pk)
+        form = EditAuthorForm(request.POST, request.FILES, instance=instance)
+        if form.is_valid():
+            form.save()
+            return redirect("edit-authors-list")
+    else:
+        author = get_object_or_404(Author, pk=pk)
+        form = EditAuthorForm(instance=author)
+        context = {"form": form}
+        return render(request, "catalog/edit_author.html", context=context)
 
 
 def add_author(request: HttpRequest) -> HttpResponse:
@@ -100,6 +120,15 @@ def add_author(request: HttpRequest) -> HttpResponse:
         form = AddAuthorForm()
         context = {"form": form}
         return render(request, "catalog/authors_add.html", context=context)
+
+
+def delete_author(request: HttpRequest, pk: int):
+    try:
+        author = Author.objects.get(pk=pk)
+        author.delete()
+        return HttpResponseRedirect(reverse("edit-authors-list"))
+    except:
+        return HttpResponseNotFound("<h2>Автор не найден</h2>")
 
 
 def logout_view(request):
