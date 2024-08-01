@@ -1,7 +1,7 @@
 from django import forms
 from datetime import date
 
-from .models import Author
+from .models import Author, Book
 
 
 class AddAuthorForm(forms.Form):
@@ -20,3 +20,9 @@ class EditAuthorForm(forms.ModelForm):
     class Meta:
         model = Author
         fields = "__all__"
+
+
+# class BookModelForm(forms.ModelForm):
+#     class Meta:
+#         model = Book
+#         fields = "__all__"

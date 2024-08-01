@@ -7,14 +7,20 @@ from django.http import (
     HttpResponseRedirect,
     HttpResponseNotFound,
 )
-from django.views.generic import ListView, DetailView
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
 from django.contrib.auth import logout
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from .models import Book, Author, BookInstance
-from .forms import AddAuthorForm, EditAuthorForm
+from .forms import AddAuthorForm, EditAuthorForm #, BookModelForm
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -135,6 +141,29 @@ def logout_view(request):
     logout(request)
 
     return redirect("login")
+
+
+def edit_books(request: HttpRequest) -> HttpResponse:
+    books = Book.objects.all()
+    context = {"books": books}
+    return render(request, "catalog/edit_books.html", context=context)
+
+
+class BookCreate(CreateView):
+    model = Book
+    fields = "__all__"
+    success_url = reverse_lazy("edit_books")
+
+
+class BookUpdate(UpdateView):
+    model = Book
+    fields = "__all__"
+    success_url = reverse_lazy("edit_books")
+
+
+class BookDelete(DeleteView):
+    model = Book
+    success_url = reverse_lazy("edit_books")
 
 
 class BookListView(ListView):
