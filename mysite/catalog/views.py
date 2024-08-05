@@ -18,9 +18,16 @@ from django.contrib.auth import logout
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
+from rest_framework.viewsets import ModelViewSet
 
 from .models import Book, Author, BookInstance
-from .forms import AddAuthorForm, EditAuthorForm #, BookModelForm
+from .forms import AddAuthorForm, EditAuthorForm  # , BookModelForm
+from .serializers import BookSerializer
+
+
+class BookViewSet(ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
 
 
 def index(request: HttpRequest) -> HttpResponse:

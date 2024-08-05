@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_cleanup",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -82,13 +83,13 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'site_db',
-        'USER': 'botalov',
-        'PASSWORD': 'botalov',
-        'HOST': 'localhost',
-        'PORT': 5430,
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "site_db",
+        "USER": "botalov",
+        "PASSWORD": "botalov",
+        "HOST": "localhost",
+        "PORT": 5430,
     }
 }
 
