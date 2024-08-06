@@ -83,6 +83,7 @@ class Book(models.Model):
         null=True,
         help_text="Выберите жанр книги",
         verbose_name="Жанр книги",
+        blank=True,
     )
     language = models.ForeignKey(
         "Language",
@@ -90,6 +91,7 @@ class Book(models.Model):
         null=True,
         help_text="Выберите язык книги",
         verbose_name="Язык книги",
+        blank=True,
     )
     publisher = models.ForeignKey(
         "Publisher",
@@ -97,6 +99,7 @@ class Book(models.Model):
         null=True,
         help_text="Выберите издательство",
         verbose_name="Издательство",
+        blank=True,
     )
     year = models.CharField(
         max_length=4,
@@ -112,6 +115,7 @@ class Book(models.Model):
         max_length=1000,
         help_text="Введите краткое описание книги",
         verbose_name="Аннотация книги",
+        blank=True,
     )
     isbn = models.CharField(
         max_length=13,
@@ -128,6 +132,7 @@ class Book(models.Model):
         upload_to="images",
         help_text="Загрузите изображение обложки",
         verbose_name="Изображение обложки",
+        blank=True,
     )
 
     def __str__(self) -> str:
