@@ -134,6 +134,12 @@ class Book(models.Model):
         verbose_name="Изображение обложки",
         blank=True,
     )
+    owner = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
 
     def __str__(self) -> str:
         return self.title

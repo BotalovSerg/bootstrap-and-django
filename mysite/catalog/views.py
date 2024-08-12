@@ -21,6 +21,7 @@ from django.urls import reverse, reverse_lazy
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .models import Book, Author, BookInstance
 from .forms import AddAuthorForm, EditAuthorForm  # , BookModelForm
@@ -31,9 +32,14 @@ class BookViewSet(ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     filterset_fields = ["price"]
     search_fields = ["price", "title"]
     ordering_fields = ["title", "year"]
+
+    def perform_create(self, serializer):
+        serializer.validated_data["owner"] = self.request.user
+        serializer.save()
 
 
 def index(request: HttpRequest) -> HttpResponse:

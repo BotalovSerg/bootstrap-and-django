@@ -1,6 +1,9 @@
+import json
+
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 
 from catalog.models import Book
 from catalog.serializers import BookSerializer
@@ -8,6 +11,7 @@ from catalog.serializers import BookSerializer
 
 class BooksApiTestCase(APITestCase):
     def setUp(self) -> None:
+        self.user = get_user_model().objects.create(username="test_user")
         self.book_1 = Book.objects.create(
             title="Book_1",
             year=2000,
@@ -45,3 +49,38 @@ class BooksApiTestCase(APITestCase):
         serializer_data = BookSerializer([self.book_1, self.book_2], many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(serializer_data, response.data)
+
+    def test_created(self):
+        self.assertEqual(3, Book.objects.all().count())
+        url = reverse("book-list")
+        data = {
+            "title": "Book Python",
+            "year": 2023,
+            "summary": "Summary Book Python",
+            "isbn": 123456789,
+            "price": 555.00,
+        }
+        json_data = json.dumps(data)
+        self.client.force_login(self.user)
+        response = self.client.post(url, json_data, content_type="application/json")
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(4, Book.objects.all().count())
+        self.assertEqual(self.user, Book.objects.last().owner)
+
+    def test_update(self):
+        url = reverse("book-detail", kwargs={"pk": self.book_1.pk})
+        data = {
+            "title": self.book_1.title,
+            "year": 2020,
+            "summary": self.book_1.summary,
+            "isbn": self.book_1.isbn,
+            "price": 340,
+        }
+        json_data = json.dumps(data)
+        self.client.force_login(self.user)
+        response = self.client.put(url, json_data, content_type="application/json")
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # self.book_1 =Book.objects.get(pk=self.book_1.pk)
+        self.book_1.refresh_from_db()
+        self.assertEqual(340, self.book_1.price)
+        self.assertEqual("2020", self.book_1.year)
