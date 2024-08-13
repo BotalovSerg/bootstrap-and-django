@@ -18,6 +18,7 @@ class BooksApiTestCase(APITestCase):
             summary="Summary book_1",
             isbn=123456789,
             price=159,
+            owner=self.user,
         )
         self.book_2 = Book.objects.create(
             title="Book_2",
@@ -81,6 +82,43 @@ class BooksApiTestCase(APITestCase):
         response = self.client.put(url, json_data, content_type="application/json")
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         # self.book_1 =Book.objects.get(pk=self.book_1.pk)
+        self.book_1.refresh_from_db()
+        self.assertEqual(340, self.book_1.price)
+        self.assertEqual("2020", self.book_1.year)
+
+    def test_update_not_owner(self):
+        url = reverse("book-detail", kwargs={"pk": self.book_1.pk})
+        self.user_2 = get_user_model().objects.create(username="test_user_2")
+        data = {
+            "title": self.book_1.title,
+            "year": 2020,
+            "summary": self.book_1.summary,
+            "isbn": self.book_1.isbn,
+            "price": 340,
+        }
+        json_data = json.dumps(data)
+        self.client.force_login(self.user_2)
+        response = self.client.put(url, json_data, content_type="application/json")
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.book_1.refresh_from_db()
+        self.assertEqual(159, self.book_1.price)
+        self.assertEqual("2000", self.book_1.year)
+
+
+    def test_update_not_owner_but_staff(self):
+        url = reverse("book-detail", kwargs={"pk": self.book_1.pk})
+        self.user_staff = get_user_model().objects.create(username="test_user_staff", is_staff=True)
+        data = {
+            "title": self.book_1.title,
+            "year": 2020,
+            "summary": self.book_1.summary,
+            "isbn": self.book_1.isbn,
+            "price": 340,
+        }
+        json_data = json.dumps(data)
+        self.client.force_login(self.user_staff)
+        response = self.client.put(url, json_data, content_type="application/json")
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.book_1.refresh_from_db()
         self.assertEqual(340, self.book_1.price)
         self.assertEqual("2020", self.book_1.year)

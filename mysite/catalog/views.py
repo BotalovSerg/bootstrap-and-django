@@ -26,13 +26,14 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .models import Book, Author, BookInstance
 from .forms import AddAuthorForm, EditAuthorForm  # , BookModelForm
 from .serializers import BookSerializer
+from .permisions import IsOwnerOrReadOnly
 
 
 class BookViewSet(ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly]
     filterset_fields = ["price"]
     search_fields = ["price", "title"]
     ordering_fields = ["title", "year"]
