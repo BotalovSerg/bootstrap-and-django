@@ -8,9 +8,15 @@ from catalog.serializers import BookSerializer
 
 class BookSerializersTestCase(TestCase):
     def test_ok(self):
-        user1 = get_user_model().objects.create(username="test_user")
-        user2 = get_user_model().objects.create(username="test_user2")
-        user3 = get_user_model().objects.create(username="test_user3")
+        user1 = get_user_model().objects.create(
+            username="test_user", first_name="Test1", last_name="User"
+        )
+        user2 = get_user_model().objects.create(
+            username="test_user2", first_name="Test2", last_name="User"
+        )
+        user3 = get_user_model().objects.create(
+            username="test_user3", first_name="Test3", last_name="User"
+        )
         book_1 = Book.objects.create(
             title="Book_1",
             year=2000,
@@ -44,9 +50,24 @@ class BookSerializersTestCase(TestCase):
                 "summary": "Summary book_1",
                 "isbn": "123456789",
                 "price": "100.50",
-                "likes_count": 3,
+                # "likes_count": 3,
                 "annotated_likes": 3,
                 "rating": "5.00",
+                "owner_name": "",
+                "readers": [
+                    {
+                        "first_name": "Test1",
+                        "last_name": "User",
+                    },
+                    {
+                        "first_name": "Test2",
+                        "last_name": "User",
+                    },
+                    {
+                        "first_name": "Test3",
+                        "last_name": "User",
+                    },
+                ],
             },
             {
                 "id": book_2.pk,
@@ -55,9 +76,20 @@ class BookSerializersTestCase(TestCase):
                 "summary": "Summary book_2",
                 "isbn": "987456321",
                 "price": "200.88",
-                "likes_count": 1,
+                # "likes_count": 1,
                 "annotated_likes": 1,
                 "rating": "3.50",
+                "owner_name": "",
+                "readers": [
+                    {
+                        "first_name": "Test1",
+                        "last_name": "User",
+                    },
+                    {
+                        "first_name": "Test3",
+                        "last_name": "User",
+                    },
+                ],
             },
         ]
         self.assertEqual(expected_data, serializer_data)
