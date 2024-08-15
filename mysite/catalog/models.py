@@ -139,7 +139,10 @@ class Book(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        related_name="my_books"
     )
+
+    readers = models.ManyToManyField(get_user_model(), through="UserBookRelation", related_name="read_books")
 
     def __str__(self) -> str:
         return self.title
@@ -209,3 +212,21 @@ class BookInstance(models.Model):
 
     def __str__(self) -> str:
         return f"{self.inv_num} {self.book} {self.status}"
+
+
+class UserBookRelation(models.Model):
+    RATE_CHOICES = (
+        (1, "OK"),
+        (2, "Fine"),
+        (3, "Good"),
+        (4, "Amazing"),
+        (5, "Incredebl"),
+    )
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    book = models.ForeignKey("Book", on_delete=models.CASCADE)
+    like = models.BooleanField(default=False)
+    in_bookmarks = models.BooleanField(default=False)
+    rate = models.PositiveSmallIntegerField(choices=RATE_CHOICES, null=True)
+
+    def __str__(self) -> str:
+        return f"{self.user.username}: {self.book!r} rate -> {self.rate}"

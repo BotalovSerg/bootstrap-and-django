@@ -10,6 +10,7 @@ from .models import (
     Publisher,
     Status,
     BookInstance,
+    UserBookRelation,
 )
 
 
@@ -56,6 +57,11 @@ class BookInstanceAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+
+@admin.register(UserBookRelation)
+class UserBookRelationAdmin(admin.ModelAdmin):
+    pass
 
 
 admin.site.register(Genre)
