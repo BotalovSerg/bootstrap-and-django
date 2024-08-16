@@ -139,10 +139,16 @@ class Book(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="my_books"
+        related_name="my_books",
     )
 
-    readers = models.ManyToManyField(get_user_model(), through="UserBookRelation", related_name="read_books")
+    readers = models.ManyToManyField(
+        get_user_model(), through="UserBookRelation", related_name="read_books"
+    )
+
+    rating = models.DecimalField(
+        max_digits=3, decimal_places=2, default=None, null=True
+    )
 
     def __str__(self) -> str:
         return self.title
@@ -230,3 +236,13 @@ class UserBookRelation(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user.username}: {self.book!r} rate -> {self.rate}"
+
+    def save(self, *args, **kwargs) -> None:
+        from .loginc import set_rating
+
+        creating = not self.pk
+        old_rating = self.rate
+        super().save(*args, **kwargs)
+        new_raring = self.rate
+        if old_rating != new_raring or creating:
+            set_rating(self.book)
